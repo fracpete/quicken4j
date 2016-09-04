@@ -41,19 +41,16 @@ import java.util.Map;
  */
 public class QIFReader {
 
-  /** the default date format. */
-  public final static String DEFAULT_DATE_FORMAT = "dd/MM/yyyy";
-
   /** the date format. */
   protected String m_DateFormat;
 
   /**
    * Initializes the reader with the default date format.
    *
-   * @see		#DEFAULT_DATE_FORMAT
+   * @see		Transaction#DEFAULT_DATE_FORMAT
    */
   public QIFReader() {
-    this(DEFAULT_DATE_FORMAT);
+    this(Transaction.DEFAULT_DATE_FORMAT);
   }
 
   /**
@@ -147,7 +144,7 @@ public class QIFReader {
 	    else
 	      values.put(line.substring(0, 1), line.substring(1));
 	  }
-	  result.add(new Transaction(values));
+	  result.add(new Transaction(values, m_DateFormat));
 	}
 	current.clear();
 	continue;
@@ -156,5 +153,26 @@ public class QIFReader {
     }
 
     return result;
+  }
+
+  /**
+   * For testing. Uses default date format.
+   *
+   * @param args	the files to read
+   * @throws Exception	if parsing of a file fails
+   */
+  public static void main(String[] args) throws Exception {
+    QIFReader reader = new QIFReader();
+    for (String arg: args) {
+      System.out.println("\n--> " + arg);
+      Transactions transactions = reader.read(new File(arg));
+      for (Transaction t: transactions) {
+	System.out.println(t);
+	System.out.println("  - Date: " + t.getDate());
+	System.out.println("  - Amount: " + t.getAmount());
+	System.out.println("  - Payee: " + t.getPayee());
+	System.out.println("  - Memo: " + t.getMemo());
+      }
+    }
   }
 }

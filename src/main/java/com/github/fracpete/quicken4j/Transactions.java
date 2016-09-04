@@ -21,6 +21,8 @@
 package com.github.fracpete.quicken4j;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Container for transactions.
@@ -51,5 +53,20 @@ public class Transactions
    */
   public String getType() {
     return m_Type;
+  }
+
+  /**
+   * Returns the codes from all transactions.
+   *
+   * @return		the codes
+   */
+  public Set<String> getCodes() {
+    Set<String>		result;
+
+    result = new HashSet<>();
+    for (Transaction t: this)
+      result.addAll(t.keys());
+
+    return result;
   }
 }

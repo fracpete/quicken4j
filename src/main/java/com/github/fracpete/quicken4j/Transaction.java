@@ -20,6 +20,8 @@
 
 package com.github.fracpete.quicken4j;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -32,14 +34,43 @@ import java.util.Set;
  */
 public class Transaction {
 
+  /** the default date format. */
+  public final static String DEFAULT_DATE_FORMAT = "dd/MM/yyyy";
+
+  /** the date format. */
+  protected String m_DateFormat;
+
   /** the fields and their values. */
   protected Map<String,String> m_Values;
 
   /**
    * Initializes the transaction.
+   * Uses default date format.
+   *
+   * @see		#DEFAULT_DATE_FORMAT
    */
   public Transaction() {
-    m_Values = new HashMap<>();
+    this(null, DEFAULT_DATE_FORMAT);
+  }
+
+  /**
+   * Initializes the transaction.
+   *
+   * @param dateFormat	the date format to use
+   */
+  public Transaction(String dateFormat) {
+    this(null, dateFormat);
+  }
+
+  /**
+   * Initializes the transaction with the specified values.
+   * Uses default date format.
+   *
+   * @param values	the values to initialize with
+   * @see		#DEFAULT_DATE_FORMAT
+   */
+  public Transaction(Map<String,String> values) {
+    this(values, DEFAULT_DATE_FORMAT);
   }
 
   /**
@@ -47,8 +78,15 @@ public class Transaction {
    *
    * @param values	the values to initialize with
    */
-  public Transaction(Map<String,String> values) {
-    this();
+  public Transaction(Map<String,String> values, String dateFormat) {
+    super();
+
+    if (dateFormat == null)
+      m_DateFormat = DEFAULT_DATE_FORMAT;
+    else
+      m_DateFormat = dateFormat;
+
+    m_Values = new HashMap<>();
     if (values != null)
       m_Values.putAll(values);
   }
@@ -79,6 +117,65 @@ public class Transaction {
    */
   public int size() {
     return m_Values.size();
+  }
+
+  /**
+   * Returns the date of the transaction.
+   *
+   * @return		the date, null if failed to parse or not present
+   */
+  public Date getDate() {
+    if (getValue("D") == null)
+      return null;
+    try {
+      return new SimpleDateFormat(m_DateFormat).parse(getValue("D"));
+    }
+    catch (Exception e) {
+      return null;
+    }
+  }
+
+  /**
+   * Returns the amount of the transaction.
+   *
+   * @return		the amount, null if failed to parse or not present
+   */
+  public Double getAmount() {
+    if (getValue("T") == null)
+      return null;
+    try {
+      return new Double(getValue("T"));
+    }
+    catch (Exception e) {
+      return null;
+    }
+  }
+
+  /**
+   * Returns the number of the transaction.
+   *
+   * @return		the number, null if not present
+   */
+  public String getNumber() {
+    return getValue("N");
+  }
+
+  /**
+   * Returns the payee of the transaction.
+   *
+   * @return		the payee, null if not present
+   */
+  public String getPayee() {
+    return getValue("P");
+  }
+
+  /**
+   * Returns the memo of the transaction.
+   *
+   * @return		the memo, null if not present
+   */
+  public String getMemo() {
+    return getValue("M");
   }
 
   /**

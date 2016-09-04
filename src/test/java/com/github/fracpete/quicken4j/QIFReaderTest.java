@@ -25,6 +25,8 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
+import java.util.Set;
+
 /**
  * Tests the QIFReader class.
  *
@@ -44,6 +46,14 @@ public class QIFReaderTest
       Transactions transactions = reader.read(ClassLoader.getSystemResourceAsStream(resource));
       assertEquals("Transactions type", "Bank", transactions.getType());
       assertEquals("Numbers of transactions", 3, transactions.size());
+      assertEquals("1st amount", -379.00, transactions.get(0).getAmount());
+      assertEquals("2nd amount", -20.28, transactions.get(1).getAmount());
+      assertEquals("3rd amount", -421.35, transactions.get(2).getAmount());
+      Set<String> codes = transactions.getCodes();
+      assertEquals("Number of codes", 3, codes.size());
+      assertTrue("Code D present", codes.contains("D"));
+      assertTrue("Code T present", codes.contains("T"));
+      assertTrue("Code P present", codes.contains("P"));
     }
     catch (Exception e) {
       fail("Failed to read resource: " + resource + "\n" + e);
