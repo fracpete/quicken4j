@@ -22,12 +22,13 @@ The following example reads in the file `simple.qif` and prints out for
 each transaction the date, amount and payee.
 
 ```java
+import java.io.File;
 import com.github.fracpete.QIFReader;
 import com.github.fracpete.Transaction;
 import com.github.fracpete.Transactions;
 ...
 QIFReader reader = new QIFReader();
-Transactions trans = reader.read("simple.qif");
+Transactions trans = reader.read(new File("simple.qif"));
 for (Transaction t: trans)
   System.out.println(t.getDate() + "\n  " + t.getAmount() + "\n  " + t.getPayee());
 ```
