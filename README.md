@@ -23,9 +23,9 @@ each transaction the date, amount and payee.
 
 ```java
 import java.io.File;
-import com.github.fracpete.QIFReader;
-import com.github.fracpete.Transaction;
-import com.github.fracpete.Transactions;
+import com.github.fracpete.quicken4j.QIFReader;
+import com.github.fracpete.quicken4j.Transaction;
+import com.github.fracpete.quicken4j.Transactions;
 ...
 QIFReader reader = new QIFReader();
 Transactions trans = reader.read(new File("simple.qif"));
