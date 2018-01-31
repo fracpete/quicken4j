@@ -20,6 +20,7 @@
 
 package com.github.fracpete.quicken4j;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,7 +36,7 @@ import java.util.Set;
 public class Transaction {
 
   /** the default date format. */
-  public final static String DEFAULT_DATE_FORMAT = "dd/MM/yyyy";
+  public static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy";
 
   /** the date format. */
   protected String m_DateFormat;
@@ -81,14 +82,16 @@ public class Transaction {
   public Transaction(Map<String,String> values, String dateFormat) {
     super();
 
-    if (dateFormat == null)
+    if (dateFormat == null) {
       m_DateFormat = DEFAULT_DATE_FORMAT;
-    else
+    } else {
       m_DateFormat = dateFormat;
+    }
 
     m_Values = new HashMap<>();
-    if (values != null)
+    if (values != null) {
       m_Values.putAll(values);
+    }
   }
 
   /**
@@ -125,12 +128,13 @@ public class Transaction {
    * @return		the date, null if failed to parse or not present
    */
   public Date getDate() {
-    if (getValue("D") == null)
+    if (getValue("D") == null) {
       return null;
+    }
     try {
       return new SimpleDateFormat(m_DateFormat).parse(getValue("D"));
     }
-    catch (Exception e) {
+    catch (final ParseException e) {
       return null;
     }
   }
@@ -141,12 +145,13 @@ public class Transaction {
    * @return		the amount, null if failed to parse or not present
    */
   public Double getAmount() {
-    if (getValue("T") == null)
+    if (getValue("T") == null) {
       return null;
-    try {
-      return new Double(getValue("T"));
     }
-    catch (Exception e) {
+    try {
+      return new Double(getValue("T").replaceAll(",", ""));
+    }
+    catch (final NumberFormatException e) {
       return null;
     }
   }
@@ -183,6 +188,7 @@ public class Transaction {
    *
    * @return		the string representation
    */
+  @Override
   public String toString() {
     return m_Values.toString();
   }
