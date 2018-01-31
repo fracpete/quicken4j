@@ -13,7 +13,7 @@ Use the following dependency to include it in your Maven project:
     <dependency>
       <groupId>com.github.fracpete</groupId>
       <artifactId>quicken4j</artifactId>
-      <version>0.0.1</version>
+      <version>0.0.2</version>
     </dependency>
 ```
 
