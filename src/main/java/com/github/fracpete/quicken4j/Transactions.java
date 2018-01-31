@@ -33,6 +33,11 @@ import java.util.Set;
 public class Transactions
   extends ArrayList<Transaction> {
 
+  /**
+   *
+   */
+  private static final long serialVersionUID = 7861635223791823156L;
+
   /** the type of transactions. */
   protected String m_Type;
 
@@ -64,8 +69,9 @@ public class Transactions
     Set<String>		result;
 
     result = new HashSet<>();
-    for (Transaction t: this)
+    for (final Transaction t: this) {
       result.addAll(t.keys());
+    }
 
     return result;
   }
