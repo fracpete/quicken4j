@@ -22,14 +22,8 @@ package com.github.fracpete.quicken4j;
 
 import org.apache.commons.io.IOUtils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -65,19 +59,32 @@ public class QIFReader {
   }
 
   /**
-   * Reads the transactions from the specified file.
-   *
-   * @param file	the file to read
-   * @return		the transactions
-   * @throws IOException
-   * @throws Exception	if reading of file fails or invalid format
+   * Reads the transactions from the specified file with the default charset.
+   * @param file specified file
+   * @return the transactions
+   * @throws IOException if file reading fails
    */
   public Transactions read(File file) throws IOException {
+    return read(file, Charset.defaultCharset());
+  }
+  
+  /**
+   * Reads the transactions from the specified file with the given encoding.
+   *
+   * @param file    the file to read
+   * @param encoding
+   * @return		the transactions
+   * @param encoding the given encoding
+   * @throws IOException if file reading fails
+   * @throws Exception	if reading of file fails or invalid format
+   */
+  public Transactions read(File file, Charset encoding) throws IOException {
     Transactions result;
-    FileReader freader;
+    Reader freader;
     BufferedReader breader;
 
-    freader = new FileReader(file);
+    FileInputStream fis = new FileInputStream(file);
+    freader = new InputStreamReader(fis, encoding);
     breader = new BufferedReader(freader);
 
     result = read(breader);
@@ -100,7 +107,7 @@ public class QIFReader {
   public Transactions read(InputStream stream) throws IOException {
     return read(new InputStreamReader(stream));
   }
-
+  
   /**
    * Reads the transactions from the specified reader.
    * NB: Doesn't close the reader.
@@ -117,7 +124,7 @@ public class QIFReader {
     List<String> lines;
     List<String> current;
     Map<String, String> values;
-    int i;
+    int i = 0;
 
     // load data
     lines = new ArrayList<>();
@@ -134,13 +141,22 @@ public class QIFReader {
     if (lines.size() == 0) {
       throw new IllegalStateException("No transaction type identifier found!");
     }
-    if (!lines.get(0).startsWith("!Type:")) {
-      throw new IllegalStateException("Invalid transaction type identifier at line 0: " + lines.get(0));
+    if (lines.get(i).startsWith("!Option:")) {
+
+      if (lines.get(i).equals("!Option:MDY")) {
+        this.m_DateFormat="MM.dd.yyyy";
+      } else {
+        throw new IllegalArgumentException("Unknown option: "+lines.get(i));
+      }
+      i++;
+    }
+    if (!lines.get(i).startsWith("!Type:")) {
+      throw new IllegalStateException("Invalid transaction type identifier at line 0: " + lines.get(i));
     }
 
     // parse transactions
-    result = new Transactions(lines.get(0).substring(6));
-    i = 0;
+    result = new Transactions(lines.get(i).substring(6));
+
     current = new ArrayList<>();
     while (i < lines.size() - 1) {
       i++;
