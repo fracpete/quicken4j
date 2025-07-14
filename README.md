@@ -11,9 +11,9 @@ Use the following dependency to include it in your Maven project:
 
 ```xml
     <dependency>
-      <groupId>com.github.fracpete</groupId>
+      <groupId>com.arepresas</groupId>
       <artifactId>quicken4j</artifactId>
-      <version>0.0.3</version>
+      <version>0.0.1</version>
     </dependency>
 ```
 
@@ -23,14 +23,22 @@ each transaction the date, amount and payee.
 
 ```java
 import java.io.File;
-import com.github.fracpete.quicken4j.QIFReader;
-import com.github.fracpete.quicken4j.Transaction;
-import com.github.fracpete.quicken4j.Transactions;
+
+import com.arepresas.quicken4j.QIFReader;
+import com.arepresas.quicken4j.Transaction;
+import com.arepresas.quicken4j.Transactions;
 ...
 QIFReader reader = new QIFReader();
 Transactions trans = reader.read(new File("simple.qif"));
-for (Transaction t: trans)
-  System.out.println(t.getDate() + "\n  " + t.getAmount() + "\n  " + t.getPayee());
+for(
+Transaction t:trans)
+  System.out.
+
+println(t.getDate() +"\n  "+t.
+
+getAmount() +"\n  "+t.
+
+getPayee());
 ```
 
 You can also read them with a specific encoding, e.g., `Windows-1252`:
@@ -38,12 +46,20 @@ You can also read them with a specific encoding, e.g., `Windows-1252`:
 ```java
 import java.io.File;
 import java.nio.charset.Charset;
-import com.github.fracpete.quicken4j.QIFReader;
-import com.github.fracpete.quicken4j.Transaction;
-import com.github.fracpete.quicken4j.Transactions;
+
+import com.arepresas.quicken4j.QIFReader;
+import com.arepresas.quicken4j.Transaction;
+import com.arepresas.quicken4j.Transactions;
 ...
 QIFReader reader = new QIFReader();
 Transactions trans = reader.read(new File("simple.qif", Charset.forName("Windows-1252")));
-for (Transaction t: trans)
-  System.out.println(t.getDate() + "\n  " + t.getAmount() + "\n  " + t.getPayee());
+for(
+Transaction t:trans)
+  System.out.
+
+println(t.getDate() +"\n  "+t.
+
+getAmount() +"\n  "+t.
+
+getPayee());
 ```

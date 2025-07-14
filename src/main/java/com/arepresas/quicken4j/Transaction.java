@@ -18,7 +18,9 @@
  * Copyright (C) 2016 FracPete
  */
 
-package com.github.fracpete.quicken4j;
+package com.arepresas.quicken4j;
+
+import lombok.extern.slf4j.Slf4j;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -33,16 +35,17 @@ import java.util.Set;
  * @author FracPete (fracpete at gmail dot com)
  * @version $Revision$
  */
+@Slf4j
 public class Transaction {
 
   /** the default date format. */
   public static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy";
 
   /** the date format. */
-  protected String m_DateFormat;
+  protected final String dateFormat;
 
   /** the fields and their values. */
-  protected Map<String,String> m_Values;
+  protected final Map<String,String> values;
 
   /**
    * Initializes the transaction.
@@ -78,19 +81,16 @@ public class Transaction {
    * Initializes the transaction with the specified values.
    *
    * @param values	the values to initialize with
+   * @param dateFormat the date format to use
    */
   public Transaction(Map<String,String> values, String dateFormat) {
     super();
 
-    if (dateFormat == null) {
-      m_DateFormat = DEFAULT_DATE_FORMAT;
-    } else {
-      m_DateFormat = dateFormat;
-    }
+    this.dateFormat = (dateFormat != null) ? dateFormat : DEFAULT_DATE_FORMAT;
 
-    m_Values = new HashMap<>();
+    this.values = new HashMap<>();
     if (values != null) {
-      m_Values.putAll(values);
+      this.values.putAll(values);
     }
   }
 
@@ -100,7 +100,7 @@ public class Transaction {
    * @return		the keys
    */
   public Set<String> keys() {
-    return m_Values.keySet();
+    return values.keySet();
   }
 
   /**
@@ -110,7 +110,7 @@ public class Transaction {
    * @return		the value, null if not found
    */
   public String getValue(String key) {
-    return m_Values.get(key);
+    return values.get(key);
   }
 
   /**
@@ -119,7 +119,7 @@ public class Transaction {
    * @return		the number of values.
    */
   public int size() {
-    return m_Values.size();
+    return values.size();
   }
 
   /**
@@ -128,13 +128,15 @@ public class Transaction {
    * @return		the date, null if failed to parse or not present
    */
   public Date getDate() {
-    if (getValue("D") == null) {
+    final String dateStr = getValue("D");
+    if (dateStr == null) {
       return null;
     }
     try {
-      return new SimpleDateFormat(m_DateFormat).parse(getValue("D"));
+      return new SimpleDateFormat(dateFormat).parse(dateStr);
     }
     catch (final ParseException e) {
+      log.warn("Failed to parse date string '{}' with format '{}'", dateStr, dateFormat, e);
       return null;
     }
   }
@@ -145,13 +147,15 @@ public class Transaction {
    * @return		the amount, null if failed to parse or not present
    */
   public Double getAmount() {
-    if (getValue("T") == null) {
+    final String amountStr = getValue("T");
+    if (amountStr == null) {
       return null;
     }
     try {
-      return new Double(getValue("T").replaceAll(",", ""));
+      return Double.valueOf(amountStr.replaceAll(",", ""));
     }
     catch (final NumberFormatException e) {
+      log.warn("Failed to parse amount string '{}'", amountStr, e);
       return null;
     }
   }
@@ -190,6 +194,6 @@ public class Transaction {
    */
   @Override
   public String toString() {
-    return m_Values.toString();
+    return values.toString();
   }
 }
